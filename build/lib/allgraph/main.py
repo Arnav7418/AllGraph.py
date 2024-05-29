@@ -3,6 +3,7 @@
 import matplotlib.pyplot as plt
 from typing import List, Tuple, Union, Optional
 from matplotlib.colors import Normalize
+import numpy as np
 
 
 def make_bar_graph(data_x: List[float], data_y: List[float], title: str = 'Bar Graph', xlabel: str = 'X-axis', ylabel: str = 'Y-axis', color: str = 'blue', alpha: float = 1.0, edgecolor: str = 'black', fontsize: int = 12, legend: bool = False, **kwargs):
@@ -164,6 +165,222 @@ def make_scatter_plot(data_x: List[float], data_y: List[float], title: str = 'Sc
     plt.xlabel(xlabel, fontsize=fontsize)
     plt.ylabel(ylabel, fontsize=fontsize)
     plt.grid(True)
+    plt.show()
+
+#----------------------------------Phase 2-------------------------------------------# 
+
+
+
+def make_area_chart(data_x: List[float], data_y: List[float], title: str = 'Area Chart', xlabel: str = 'X-axis', ylabel: str = 'Y-axis', color: str = 'blue', alpha: float = 1.0, linestyle: str = '-', linewidth: float = 1.0, fontsize: int = 12, legend: bool = False, **kwargs):
+    """
+    Create an area chart.
+
+    Parameters:
+        data_x (List[float]): Values for the x-axis. Example: [1, 2, 3, 4]
+        data_y (List[float]): Values for the y-axis. Example: [10, 20, 30, 40]
+        title (str, optional): Title of the graph. Defaults to 'Area Chart'. Example: 'Sales Data'
+        xlabel (str, optional): Label for the x-axis. Defaults to 'X-axis'. Example: 'Months'
+        ylabel (str, optional): Label for the y-axis. Defaults to 'Y-axis'. Example: 'Revenue'
+        color (str, optional): Color of the area. Defaults to 'blue'. Example: 'red'
+        alpha (float, optional): Transparency of the area. Defaults to 1.0. Example: 0.5
+        linestyle (str, optional): Style of the line. Defaults to '-'. Example: '--'
+        linewidth (float, optional): Width of the line. Defaults to 1.0. Example: 2.0
+        fontsize (int, optional): Font size for text elements. Defaults to 12. Example: 14
+        legend (bool, optional): Whether to display the legend. Defaults to False. Example: True
+        **kwargs: Additional keyword arguments for matplotlib plot function.
+    """
+    # Validation
+    if len(data_x) != len(data_y):
+        raise ValueError("data_x and data_y must be of the same length")
+
+    # Plot
+    plt.figure(figsize=(10, 6))
+    plt.fill_between(data_x, data_y, color=color, alpha=alpha, **kwargs)
+    plt.plot(data_x, data_y, color=color, linestyle=linestyle, linewidth=linewidth, **kwargs)
+    
+    plt.title(title, fontsize=fontsize)
+    plt.xlabel(xlabel, fontsize=fontsize)
+    plt.ylabel(ylabel, fontsize=fontsize)
+    
+    if legend:
+        plt.legend([f'Area {i+1}' for i in range(len(data_x))], fontsize=fontsize)
+    
+    plt.grid(True)
+    plt.show()
+
+
+
+
+
+import matplotlib.pyplot as plt
+from typing import List
+
+def make_stacked_bar_chart(categories: List[str], data: List[List[float]], labels: List[str], title: str = 'Stacked Bar Chart', xlabel: str = 'X-axis', ylabel: str = 'Y-axis', colors: List[str] = None, fontsize: int = 12, legend: bool = True, **kwargs):
+    """
+    Create a stacked bar chart.
+
+    Parameters:
+        categories (List[str]): Categories for the x-axis. Example: ['A', 'B', 'C']
+        data (List[List[float]]): Values for each stack segment. Example: [[10, 20, 30], [15, 25, 35]]
+        labels (List[str]): Labels for each stack segment. Example: ['Segment 1', 'Segment 2']
+        title (str, optional): Title of the graph. Defaults to 'Stacked Bar Chart'. Example: 'Sales Data'
+        xlabel (str, optional): Label for the x-axis. Defaults to 'X-axis'. Example: 'Months'
+        ylabel (str, optional): Label for the y-axis. Defaults to 'Y-axis'. Example: 'Revenue'
+        colors (List[str], optional): Colors for each stack segment. Defaults to None. Example: ['red', 'blue']
+        fontsize (int, optional): Font size for text elements. Defaults to 12. Example: 14
+        legend (bool, optional): Whether to display the legend. Defaults to True. Example: True
+        **kwargs: Additional keyword arguments for matplotlib bar function.
+    """
+    # Validation
+    if not all(isinstance(i, list) for i in data):
+        raise ValueError("data should be a list of lists")
+    if len(categories) != len(data[0]):
+        raise ValueError("Length of categories and length of data columns must match")
+    if colors and len(colors) != len(data):
+        raise ValueError("Length of colors and length of data rows must match")
+
+    # Plot
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    bar_width = 0.35
+    bar_positions = range(len(categories))
+    
+    # Initial bottom position is zero for all bars
+    bottom = [0] * len(categories)
+    
+    for i, segment in enumerate(data):
+        ax.bar(bar_positions, segment, bar_width, label=labels[i], bottom=bottom, color=colors[i] if colors else None, **kwargs)
+        # Update bottom position for next segment
+        bottom = [bottom[j] + segment[j] for j in range(len(segment))]
+
+    ax.set_title(title, fontsize=fontsize)
+    ax.set_xlabel(xlabel, fontsize=fontsize)
+    ax.set_ylabel(ylabel, fontsize=fontsize)
+    ax.set_xticks(bar_positions)
+    ax.set_xticklabels(categories, fontsize=fontsize)
+    
+    if legend:
+        ax.legend(fontsize=fontsize)
+
+    plt.show()
+
+
+
+
+def make_box_plot(data: List[List[float]], labels: Optional[List[str]] = None, title: str = 'Box Plot', xlabel: str = 'Categories', ylabel: str = 'Values', color: str = 'blue', notch: bool = False, vert: bool = True, patch_artist: bool = False, showmeans: bool = False, showfliers: bool = True, showcaps: bool = True, showbox: bool = True, fontsize: int = 12):
+    """
+    Create a box plot.
+
+    Parameters:
+        data (List[List[float]]): List of data lists for each category. Example: [[10, 20, 30], [15, 25, 35], [20, 30, 40]]
+        labels (List[str], optional): Labels for each category. Defaults to None. Example: ['Category 1', 'Category 2', 'Category 3']
+        title (str, optional): Title of the graph. Defaults to 'Box Plot'. Example: 'Distribution of Scores'
+        xlabel (str, optional): Label for the x-axis. Defaults to 'Categories'. Example: 'Groups'
+        ylabel (str, optional): Label for the y-axis. Defaults to 'Values'. Example: 'Scores'
+        color (str, optional): Color of the boxes. Defaults to 'blue'. Example: 'green'
+        notch (bool, optional): Whether to draw a notch around the median. Defaults to False. Example: True
+        vert (bool, optional): Whether to plot the boxes vertically. Defaults to True. Example: False
+        patch_artist (bool, optional): Whether to fill the boxes with color. Defaults to False. Example: True
+        showmeans (bool, optional): Whether to show the mean value. Defaults to False. Example: True
+        showfliers (bool, optional): Whether to show the outliers. Defaults to True. Example: False
+        showcaps (bool, optional): Whether to show the caps. Defaults to True. Example: False
+        showbox (bool, optional): Whether to show the boxes. Defaults to True. Example: False
+        fontsize (int, optional): Font size for text elements. Defaults to 12. Example: 14
+    """
+    plt.figure(figsize=(10, 6))
+    plt.boxplot(data, labels=labels, notch=notch, vert=vert, patch_artist=patch_artist,
+                showmeans=showmeans, showfliers=showfliers, showcaps=showcaps, showbox=showbox)
+    plt.title(title, fontsize=fontsize)
+    plt.xlabel(xlabel, fontsize=fontsize)
+    plt.ylabel(ylabel, fontsize=fontsize)
+    plt.grid(True)
+    plt.show()
+
+
+def make_bubble_chart(data_x: List[float], data_y: List[float], sizes: List[float], title: str = 'Bubble Chart', xlabel: str = 'X-axis', ylabel: str = 'Y-axis', color: str = 'blue', alpha: float = 0.6, edgecolors: str = 'black', linewidths: float = 1.0, fontsize: int = 12):
+    """
+    Create a bubble chart.
+
+    Parameters:
+        data_x (List[float]): Values for the x-axis. Example: [1, 2, 3, 4]
+        data_y (List[float]): Values for the y-axis. Example: [10, 20, 30, 40]
+        sizes (List[float]): Sizes of the bubbles. Example: [50, 100, 150, 200]
+        title (str, optional): Title of the graph. Defaults to 'Bubble Chart'. Example: 'Sales Data'
+        xlabel (str, optional): Label for the x-axis. Defaults to 'X-axis'. Example: 'Months'
+        ylabel (str, optional): Label for the y-axis. Defaults to 'Y-axis'. Example: 'Revenue'
+        color (str, optional): Color of the bubbles. Defaults to 'blue'. Example: 'red'
+        alpha (float, optional): Transparency of the bubbles. Defaults to 0.6. Example: 0.8
+        edgecolors (str, optional): Color of bubble edges. Defaults to 'black'. Example: 'red'
+        linewidths (float, optional): Width of bubble edges. Defaults to 1.0. Example: 2.0
+        fontsize (int, optional): Font size for text elements. Defaults to 12. Example: 14
+    """
+    plt.figure(figsize=(10, 6))
+    plt.scatter(data_x, data_y, s=sizes, c=color, alpha=alpha, edgecolors=edgecolors, linewidths=linewidths)
+    plt.title(title, fontsize=fontsize)
+    plt.xlabel(xlabel, fontsize=fontsize)
+    plt.ylabel(ylabel, fontsize=fontsize)
+    plt.grid(True)
+    plt.show()
+
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+from typing import List, Optional
+
+
+def make_heat_map(data: List[List[float]], x_labels: Optional[List[str]] = None, y_labels: Optional[List[str]] = None, title: str = 'Heat Map', xlabel: str = 'X-axis', ylabel: str = 'Y-axis', cmap: str = 'viridis', cbar_label: str = 'Values', fontsize: int = 12):
+    """
+    Create a heat map.
+
+    Parameters:
+        data (List[List[float]]): 2D array of values. Example: [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+        x_labels (List[str], optional): Labels for the x-axis. Defaults to None. Example: ['A', 'B', 'C']
+        y_labels (List[str], optional): Labels for the y-axis. Defaults to None. Example: ['X', 'Y', 'Z']
+        title (str, optional): Title of the graph. Defaults to 'Heat Map'. Example: 'Temperature Distribution'
+        xlabel (str, optional): Label for the x-axis. Defaults to 'X-axis'. Example: 'Time'
+        ylabel (str, optional): Label for the y-axis. Defaults to 'Y-axis'. Example: 'Frequency'
+        cmap (str, optional): Colormap for mapping values to colors. Defaults to 'viridis'. Example: 'coolwarm'
+        cbar_label (str, optional): Label for the color bar. Defaults to 'Values'. Example: 'Temperature (°C)'
+        fontsize (int, optional): Font size for text elements. Defaults to 12. Example: 14
+    """
+    plt.figure(figsize=(10, 6))
+    plt.imshow(data, cmap=cmap, aspect='auto')
+    plt.colorbar(label=cbar_label)
+    plt.title(title, fontsize=fontsize)
+    plt.xlabel(xlabel, fontsize=fontsize)
+    plt.ylabel(ylabel, fontsize=fontsize)
+    if x_labels:
+        plt.xticks(ticks=np.arange(len(x_labels)), labels=x_labels)
+    if y_labels:
+        plt.yticks(ticks=np.arange(len(y_labels)), labels=y_labels)
+    plt.show()
+
+
+def make_radar_chart(categories: List[str], values: List[float], title: str = 'Radar Chart', color: str = 'blue', alpha: float = 0.6, fontsize: int = 12):
+    """
+    Create a radar chart.
+
+    Parameters:
+        categories (List[str]): Labels for each category. Example: ['A', 'B', 'C', 'D']
+        values (List[float]): Values for each category. Example: [0.6, 0.7, 0.8, 0.9]
+        title (str, optional): Title of the graph. Defaults to 'Radar Chart'. Example: 'Performance Metrics'
+        color (str, optional): Color of the radar area. Defaults to 'blue'. Example: 'green'
+        alpha (float, optional): Transparency of the radar area. Defaults to 0.6. Example: 0.8
+        fontsize (int, optional): Font size for text elements. Defaults to 12. Example: 14
+    """
+    angles = np.linspace(0, 2 * np.pi, len(categories), endpoint=False).tolist()
+
+    values += values[:1]  # Close the plot
+    angles += angles[:1]
+
+    fig, ax = plt.subplots(figsize=(10, 6), subplot_kw=dict(polar=True))
+    ax.fill(angles, values, color=color, alpha=alpha)
+    ax.set_yticklabels([])
+    ax.set_xticks(angles[:-1])
+    ax.set_xticklabels(categories, fontsize=fontsize)
+    ax.set_title(title, fontsize=fontsize)
+    ax.grid(True)
     plt.show()
 
 

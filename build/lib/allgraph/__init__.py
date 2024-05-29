@@ -4,5 +4,12 @@ from .main import (
     make_line_graph,
     make_histogram,
     make_pie_chart,
-    make_scatter_plot
+    make_scatter_plot,
+    make_area_chart,
+    make_stacked_bar_chart,
+    make_box_plot,
+    make_bubble_chart,
+    make_heat_map,
+    make_radar_chart,
+    
 )
