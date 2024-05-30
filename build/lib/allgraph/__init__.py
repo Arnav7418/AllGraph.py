@@ -11,5 +11,8 @@ from .main import (
     make_bubble_chart,
     make_heat_map,
     make_radar_chart,
+    make_treemap,
+    make_gantt_chart,
+    make_waterfall_chart
     
 )

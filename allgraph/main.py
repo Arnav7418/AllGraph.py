@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from typing import List, Tuple, Union, Optional
 from matplotlib.colors import Normalize
 import numpy as np
+import squarify
 
 
 def make_bar_graph(data_x: List[float], data_y: List[float], title: str = 'Bar Graph', xlabel: str = 'X-axis', ylabel: str = 'Y-axis', color: str = 'blue', alpha: float = 1.0, edgecolor: str = 'black', fontsize: int = 12, legend: bool = False, **kwargs):
@@ -386,3 +387,133 @@ def make_radar_chart(categories: List[str], values: List[float], title: str = 'R
 
 #----------------------------Phase 3--------------------------------------------#
     
+
+def make_treemap(data: List[float], labels: List[str], title: str = 'Treemap', colors: List[str] = None, alpha: float = 0.8, fontsize: int = 12, **kwargs):
+    """
+    Create a treemap using squarify and matplotlib.
+
+    Parameters:
+        data (List[float]): Sizes of the rectangles. Example: [50, 25, 25]
+        labels (List[str]): Labels for each rectangle. Example: ['A', 'B', 'C']
+        title (str, optional): Title of the graph. Defaults to 'Treemap'. Example: 'Category Distribution'
+        colors (List[str], optional): Colors for each rectangle. Defaults to None. Example: ['red', 'blue', 'green']
+        alpha (float, optional): Transparency of rectangles. Defaults to 0.8. Example: 0.7
+        fontsize (int, optional): Font size for text elements. Defaults to 12. Example: 14
+        **kwargs: Additional keyword arguments for matplotlib text function.
+    """
+    if len(data) != len(labels):
+        raise ValueError("data and labels must be of the same length")
+    
+    if colors is None:
+        colors = plt.cm.tab20.colors  # Default color cycle
+    elif len(colors) < len(data):
+        raise ValueError("Not enough colors for the data provided")
+
+    fig, ax = plt.subplots()
+    ax.set_title(title, fontsize=fontsize)
+    ax.axis('off')
+
+    # Normalize data
+    norm_data = [i / sum(data) for i in data]
+
+    # Plot
+    squarify.plot(sizes=norm_data, label=labels, color=colors, alpha=alpha, ax=ax, **kwargs)
+    plt.show()
+
+
+
+
+def make_waterfall_chart(categories: List[str], values: List[float], title: str = 'Waterfall Chart', xlabel: str = 'Categories', ylabel: str = 'Values', colors: List[str] = None, fontsize: int = 12, **kwargs):
+    """
+    Create a waterfall chart.
+
+    Parameters:
+        categories (List[str]): Labels for each bar. Example: ['A', 'B', 'C']
+        values (List[float]): Values for each bar. Example: [10, -5, 15]
+        title (str, optional): Title of the graph. Defaults to 'Waterfall Chart'. Example: 'Financial Changes'
+        xlabel (str, optional): Label for the x-axis. Defaults to 'Categories'. Example: 'Stages'
+        ylabel (str, optional): Label for the y-axis. Defaults to 'Values'. Example: 'Amount'
+        colors (List[str], optional): Colors for each bar. Defaults to None. Example: ['green', 'red', 'blue']
+        fontsize (int, optional): Font size for text elements. Defaults to 12. Example: 14
+        **kwargs: Additional keyword arguments for matplotlib bar function.
+    """
+    # Validation
+    if len(categories) != len(values):
+        raise ValueError("categories and values must be of the same length")
+
+    # Compute cumulative values
+    cumulative = np.cumsum(values)
+    total = cumulative[-1]
+
+    # Bar colors
+    if colors is None:
+        colors = ['green' if v >= 0 else 'red' for v in values]
+
+    # Plot
+    plt.figure(figsize=(10, 6))
+    plt.bar(categories, values, color=colors, edgecolor='black', **kwargs)
+    plt.plot(categories, cumulative, color='blue', marker='o', linestyle='-', linewidth=2, markersize=8)
+    
+    # Annotate values
+    for i, (category, value) in enumerate(zip(categories, values)):
+        plt.text(i, value/2, f'{value}', ha='center', va='center', color='black', fontsize=fontsize)
+        plt.text(i, cumulative[i], f'{cumulative[i]}', ha='center', va='bottom', color='blue', fontsize=fontsize)
+
+    plt.title(title, fontsize=fontsize)
+    plt.xlabel(xlabel, fontsize=fontsize)
+    plt.ylabel(ylabel, fontsize=fontsize)
+    plt.grid(True)
+    plt.show()
+
+
+
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from datetime import datetime
+from typing import List
+
+def make_gantt_chart(tasks: List[str], start_dates: List[str], end_dates: List[str], title: str = 'Gantt Chart', xlabel: str = 'Date', ylabel: str = 'Tasks', colors: List[str] = None, fontsize: int = 12, **kwargs):
+    """
+    Create a Gantt chart.
+
+    Parameters:
+        tasks (List[str]): Labels for each task. Example: ['Task 1', 'Task 2']
+        start_dates (List[str]): Start dates for each task. Example: ['2021-01-01', '2021-01-05']
+        end_dates (List[str]): End dates for each task. Example: ['2021-01-10', '2021-01-15']
+        title (str, optional): Title of the graph. Defaults to 'Gantt Chart'. Example: 'Project Timeline'
+        xlabel (str, optional): Label for the x-axis. Defaults to 'Date'. Example: 'Timeline'
+        ylabel (str, optional): Label for the y-axis. Defaults to 'Tasks'. Example: 'Project Tasks'
+        colors (List[str], optional): Colors for each task. Defaults to None. Example: ['red', 'blue']
+        fontsize (int, optional): Font size for text elements. Defaults to 12. Example: 14
+        **kwargs: Additional keyword arguments for matplotlib barh function.
+    """
+    if len(tasks) != len(start_dates) or len(tasks) != len(end_dates):
+        raise ValueError("tasks, start_dates, and end_dates must be of the same length")
+    
+    # Convert dates to datetime objects
+    start_dates = [datetime.strptime(date, '%Y-%m-%d') for date in start_dates]
+    end_dates = [datetime.strptime(date, '%Y-%m-%d') for date in end_dates]
+    
+    # Calculate durations
+    durations = [(end - start).days for start, end in zip(start_dates, end_dates)]
+
+    # Colors
+    if colors is None:
+        colors = plt.cm.tab20.colors
+
+    fig, ax = plt.subplots()
+    for i, task in enumerate(tasks):
+        ax.barh(task, durations[i], left=start_dates[i], color=colors[i % len(colors)], edgecolor='black', **kwargs)
+    
+    # Format the x-axis to show dates
+    ax.xaxis_date()
+    ax.xaxis.set_major_locator(mdates.MonthLocator())
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+
+    plt.title(title, fontsize=fontsize)
+    plt.xlabel(xlabel, fontsize=fontsize)
+    plt.ylabel(ylabel, fontsize=fontsize)
+    plt.grid(True)
+    plt.show()
+
+
