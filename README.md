@@ -5,8 +5,8 @@ AllGraph is a Python library for creating various types of charts and graphs wit
 
 ## List of all the graphs that can be made using allgraph.py
 
-- Line Graph
 - Bar Chart
+- Line Graph
 - Histogram
 - Pie Chart
 - Scatter Plot
