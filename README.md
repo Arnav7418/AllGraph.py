@@ -498,6 +498,6 @@ make_gantt_chart(tasks, start_dates, end_dates, colors=colors)
 
 
 
-
+#### We hope you found this documentation helpful! Your contributions, error identifications, and suggestions are highly valued as they help improve the quality of our documentation and the library itself. Please feel free to contribute by submitting pull requests, reporting issues, or providing feedback. Together, we can make this documentation more comprehensive and accurate for all users. Thank you for your support and happy coding!
 
 
