@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='allgraph',
-    version='0.1',
+    version='0.2',
     packages=find_packages(),
     install_requires=[
         'matplotlib',
@@ -19,5 +19,6 @@ setup(
         'Programming Language :: Python :: 3',
     ],
     python_requires='>=3.6',
+    
 )
 
