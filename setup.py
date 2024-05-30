@@ -9,16 +9,14 @@ setup(
         'matplotlib',
         'squarify'
     ],
-    author='Your Name',
-    author_email='your.email@example.com',
+    author='Arnav',
+    author_email='arnav.singh7418@gmail.com',
     description='A library for creating various types of graphs',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url='https://github.com/yourusername/allgraph',  # Update with your actual repo URL
+    url='https://github.com/Arnav7418/AllGraph.py',  
     classifiers=[
         'Programming Language :: Python :: 3',
-        'License :: OSI Approved :: MIT License',
-        'Operating System :: OS Independent',
     ],
     python_requires='>=3.6',
 )
